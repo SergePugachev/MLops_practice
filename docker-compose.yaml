@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  app:
+    build: ./app
+    image: app-image
+    env_file:
+      - ./app/.env
+    volumes:
+      - ./app:/app
+
+  web-proxy:
+    build: ./nginx
+    image: nginx
+    depends_on:
+      - app
+    ports:
+      - 80:80
+      - 443:443
+
+  rabbitmq:
+    build: ./rabbitmq
+    image: rabbitmq
+    restart: on-failure
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - C:/Users/serge/Desktop/MLops:/var/lib/rabbitmq
+
+  database:
+    build: ./database
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - C:/Users/serge/Desktop/MLops:/var/lib/postgresql/data
