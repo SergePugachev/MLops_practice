@@ -11,7 +11,6 @@ services:
 
   web-proxy:
     build: ./nginx
-    image: nginx
     depends_on:
       - app
     ports:
@@ -19,21 +18,23 @@ services:
       - 443:443
 
   rabbitmq:
-    build: ./rabbitmq
-    image: rabbitmq
+    image: rabbitmq:3.13.7
     restart: on-failure
     ports:
       - 15672:15672
       - 5672:5672
     volumes:
-      - C:/Users/serge/Desktop/MLops:/var/lib/rabbitmq
+      - rmq_volume:/var/lib/rabbitmq
 
   database:
-    build: ./database
-    image: postgres
+    image: postgres:16.8
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     volumes:
-      - C:/Users/serge/Desktop/MLops:/var/lib/postgresql/data
+      - pg_volume:/var/lib/postgresql/data
+
+volumes:
+  rmq_volume:
+  pg_volume: 
