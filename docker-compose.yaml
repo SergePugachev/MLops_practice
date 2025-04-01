@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  app:
+    build: ./app
+    image: app-image
+    env_file:
+      - ./app/.env
+    volumes:
+      - ./app:/app
+
+  web-proxy:
+    build: ./nginx
+    depends_on:
+      - app
+    ports:
+      - 80:80
+      - 443:443
+
+  rabbitmq:
+    image: rabbitmq:3.13.7
+    restart: on-failure
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - rmq_volume:/var/lib/rabbitmq
+
+  database:
+    image: postgres:16.8
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pg_volume:/var/lib/postgresql/data
+
+volumes:
+  rmq_volume:
+  pg_volume: 
